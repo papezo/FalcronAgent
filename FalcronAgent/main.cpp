@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int main()
 {
 	HMODULE hDLL = LoadLibraryA("FalcronHook.dll");
 	if (hDLL == NULL) {

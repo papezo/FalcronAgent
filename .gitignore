@@ -1,0 +1,27 @@
+
+# VS cache and temp files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+*.ipch
+*.pch
+
+# OS-specific
+Thumbs.db
+.DS_Store
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+
+# vcpkg
+vcpkg_installed/
+buildtrees/
+downloads/
+packages/

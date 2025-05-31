@@ -1,1 +1,2 @@
-﻿  FalcronHook.vcxproj -> C:\Users\papez\source\repos\FalcronAgent\x64\Debug\FalcronHook.dll
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (FalcronHook.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+LINK : fatal error LNK1104: cannot open file 'libMinHook.x64.lib'

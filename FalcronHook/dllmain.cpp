@@ -1,7 +1,9 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 #include <iostream>
-#include <Minhook.h>
+#include "C:/Users/papez/source/repos/TeverusAgent/minhook/include/MinHook.h"
+#include "logger.hpp"
+
 
 #if _WIN64
 #pragma comment(lib, "libMinHook.x64.lib")
@@ -61,7 +63,7 @@ DWORD NTAPI HookedNtProtectVirtualMemory(
     PULONG OldProtect) {
 
     if (NewProtect == PAGE_EXECUTE_READWRITE) {
-        std::cout << "PAGE_EXECUTE_READWRITE permission detected in NtAllocateVirtualMemory function" << std::endl;
+        Logger::LogMessage("PAGE_EXECUTE_READWRITE permission detected in NtAllocateVirtualMemory function");
         // if protections enabled then close the process, prevent the call and so on.,.
     }
 
@@ -78,47 +80,31 @@ void InitHooks()
 	MH_STATUS status = MH_Initialize();
 
     if (status != MH_OK) {
-        std::cout << "Failed to initialize MinHook: " << MH_StatusToString(status) << std::endl;
+        Logger::LogMessage("Failed to initialize MinHook: " + status);
         return;
 	}
 
     if (MH_CreateHookApi(L"ntdll", "NtProtectVirtualMemory", &HookedNtProtectVirtualMemory, (LPVOID*)&pOriginalNtAllocateVirtualMemory) != MH_OK)
     {
-		std::cout << "Failed to create hook NtProtectVirtualMemory: " << MH_StatusToString(status) << std::endl;
+        Logger::LogMessage("Failed to create hook NtProtectVirtualMemory: " + status);
     }
 
     if (MH_CreateHookApi(L"ntdll", "HookedNtAllocateVirtualMemory", &HookedNtAllocateVirtualMemory, (LPVOID*)&pOriginalNtAllocateVirtualMemory) != MH_OK)
     {
-        std::cout << "Failed to create hook NtProtectVirtualMemory: " << MH_StatusToString(status) << std::endl;
+        Logger::LogMessage("Failed to create hook NtProtectVirtualMemory: " + status);
     }
 
     if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
     {
-        std::cout << "Failed to enable hooks: " << std::endl;
+        Logger::LogMessage("Failed to enable hooks: ");
     }
 
-	std::cout << "Hooks initialized successfully." << std::endl;
+    Logger::LogMessage("Hooks initialized successfully.");
 }
-void CreateConsole()
-{
-    FreeConsole();
 
-    if (AllocConsole())
-    {
-        FILE* file;
-        freopen_s(&file, "CONOUT$", "w", stdout);
-        freopen_s(&file, "CONOUT$", "w", stderr);
-        freopen_s(&file, "CONOUT$", "w", stdin);
-
-		std::cout << "Console has been allocated.." << std::endl;
-    }
-}
 DWORD MainFunction(LPVOID lpParam)
 {
-    CreateConsole();
     InitHooks();
-    Sleep(500000);
-
     return 0;
 
 }
@@ -131,12 +117,12 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        CreateThread(NULL, 0, MainFunction, NULL, 0, NULL);
+        Logger::LogMessage("Injected into process");
+        MainFunction(NULL);
         break;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
-        FreeConsole();
         break;
     }
     return TRUE;
